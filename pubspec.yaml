@@ -29,7 +29,7 @@ dependencies:
   flutter_bloc:
   equatable:
   get_it: 
-  floor: 
+  floor:
   dio: 
   flutter_dotenv: 
 
