@@ -5,6 +5,7 @@ import 'package:sillicont_tv/features/shows/data/datasources/remote/tmdb_api_ser
 import 'package:sillicont_tv/features/shows/data/repository/show_repository_impl.dart';
 import 'package:sillicont_tv/features/shows/domain/repository/show_repository.dart';
 import 'package:sillicont_tv/features/shows/domain/usecases/get_popular.dart';
+import 'package:sillicont_tv/features/shows/domain/usecases/get_show_details.dart';
 import 'package:sillicont_tv/features/shows/presentation/bloc/show_bloc.dart';
 
 final getIt = GetIt.instance;
@@ -20,14 +21,18 @@ Future<void> initializeDependencies() async {
   // Tmdb service
   getIt.registerLazySingleton(() => TmdbApiService(dio: getIt()));
 
-
-
   // Repositories
   getIt.registerLazySingleton<ShowRepository>(() => ShowRepositoryImpl(showDatasource: getIt()));
 
   // Use cases
   getIt.registerSingleton<GetPopularUseCase>(GetPopularUseCase(showRepository: getIt()));
+  getIt.registerSingleton<GetShowDetailsUsecase>(
+      GetShowDetailsUsecase(showRepository: getIt())
+  );
 
   // Blocs
-  getIt.registerFactory(() => ShowBloc(getPopularUseCase: getIt()));
+  getIt.registerFactory(() => ShowBloc(
+      getPopularUseCase: getIt(),
+      getShowDetailsUsecase: getIt()
+  ));
 }
