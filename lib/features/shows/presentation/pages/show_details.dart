@@ -17,16 +17,9 @@ class ShowDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return PopScope(
-      onPopInvokedWithResult: (popped, result) {
-        if (popped) {
-          context.read<ShowBloc>().add(GetPopularShows());
-        }
-      },
-        child: Scaffold(
-          appBar: _buildAppBar(context),
-          body: _buildBody(context),
-        )
+    return Scaffold(
+      appBar: _buildAppBar(context),
+      body: _buildBody(context),
     );
   }
 
@@ -35,6 +28,7 @@ class ShowDetails extends StatelessWidget {
       leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
+            context.read<ShowBloc>().add(GetPopularShows());
           },
           icon: Icon(Icons.arrow_back)
       ),

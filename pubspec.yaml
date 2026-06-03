@@ -30,7 +30,6 @@ dependencies:
   equatable:
   get_it: 
   floor: 
-  cached_network_image: 
   dio: 
   flutter_dotenv: 
 

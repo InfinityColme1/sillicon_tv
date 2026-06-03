@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sillicont_tv/features/shows/data/models/genre.dart';
 import 'package:sillicont_tv/features/shows/data/models/show.dart';
+import 'package:sillicont_tv/features/shows/data/models/show_details.dart';
 
 
 class TmdbApiService {
@@ -31,5 +32,17 @@ class TmdbApiService {
     return (result.data['genres'] as List)
         .map((e) => GenreModel.fromJson(e))
         .toList();
+  }
+
+  Future<ShowDetailsModel> getShowDetails(
+      int ? showId,
+      String ? language) async {
+
+    var result = await dio.get(
+      '/3/tv/$showId',
+      queryParameters: {'language': language, 'api_key': dotenv.env['API_KEY']}
+    );
+
+    return ShowDetailsModel.fromJson(result.data);
   }
 }
