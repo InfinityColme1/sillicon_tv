@@ -1,0 +1,20 @@
+
+{
+  "@@locale": "en",
+  "language": "English",
+  "@language": {
+    "description": "Selected language"
+  },
+  "popular": "Popular right now",
+  "firstAired": "First aired in",
+  "airedIn": "Aired in",
+  "seasons": "Seasons",
+  "season": "Season",
+  "episodes": "Episodes",
+  "episode": "Episode",
+  "status": "Status",
+  "adult": "For adults only",
+  "overview": "Overview",
+  "createdBy": "Created by",
+  "lastEpisode": "Last aired episode"
+}

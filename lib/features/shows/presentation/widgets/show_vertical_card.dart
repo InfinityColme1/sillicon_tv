@@ -11,6 +11,7 @@ class ShowVerticalCard extends StatelessWidget {
   final List<String> ?  textList;
 
   final bool unknown;
+  final bool searchOnline;
 
   const ShowVerticalCard({
     super.key,
@@ -19,7 +20,8 @@ class ShowVerticalCard extends StatelessWidget {
     this.subtitle,
     this.voteAverage,
     this.textList,
-    this.unknown = false
+    this.unknown = false,
+    required this.searchOnline
   });
 
   @override
@@ -31,7 +33,7 @@ class ShowVerticalCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
 
-              unknown
+              (unknown || !searchOnline)
               ? Image.asset(
                 unknownImg,
                 height: 300,
