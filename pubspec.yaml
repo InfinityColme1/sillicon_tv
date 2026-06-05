@@ -29,11 +29,13 @@ dependencies:
   flutter_localization:
   sqflite:
   flutter_bloc:
+  flutter_native_splash:
   equatable:
   get_it: 
   floor:
   dio:
   flutter_dotenv:
+  url_launcher:
   intl: any
 
 dev_dependencies:

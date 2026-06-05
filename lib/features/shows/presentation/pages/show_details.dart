@@ -7,7 +7,9 @@ import 'package:sillicont_tv/features/shows/presentation/bloc/show_event.dart';
 import 'package:sillicont_tv/features/shows/presentation/bloc/show_state.dart';
 import 'package:sillicont_tv/features/shows/presentation/widgets/show_horizontal_card.dart';
 import 'package:sillicont_tv/l10/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../config/theme/app_colors.dart';
 import '../widgets/show_vertical_card.dart';
 
 class ShowDetails extends StatelessWidget {
@@ -56,30 +58,7 @@ class ShowDetails extends StatelessWidget {
 
     bodyWidgets.add(_buildHeader(context, searchOnline));
 
-    bodyWidgets.add(Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
-      child: Card(
-        child: Column(
-          children: [
-            Text(
-                "${AppLocalizations.of(context)!.seasons}: ${_showDetailsEntity.numberOfSeasons}",
-                style: Theme.of(context).textTheme.titleMedium
-            ),
-            Text(
-                "${AppLocalizations.of(context)!.episodes}: ${_showDetailsEntity.numberOfEpisodes}",
-                style: Theme.of(context).textTheme.titleMedium
-            ),
-            Text(
-                "${AppLocalizations.of(context)!.seasons}: ${_showDetailsEntity.status}",
-                style: Theme.of(context).textTheme.titleMedium
-            ),
-            if (_showDetailsEntity.adult != null)
-              if (_showDetailsEntity.adult!)
-                Text(AppLocalizations.of(context)!.adult, style: Theme.of(context).textTheme.titleMedium),
-          ],
-        ),
-      ),
-    ));
+    bodyWidgets.add(_buildInfoCard(context));
 
     bodyWidgets.add(Padding(
       padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
@@ -125,7 +104,7 @@ class ShowDetails extends StatelessWidget {
           path: _showDetailsEntity.lastEpisodeToAir!.stillPath,
           title: _showDetailsEntity.lastEpisodeToAir!.name!,
           searchOnline: searchOnline,
-          subtitle: "Aired in ${_showDetailsEntity.lastEpisodeToAir!.airDate!}",
+          subtitle: "${AppLocalizations.of(context)!.airedIn} ${_showDetailsEntity.lastEpisodeToAir!.airDate!}",
           voteAverage: _showDetailsEntity.lastEpisodeToAir!.voteAverage!,
           textList: [
             '${AppLocalizations.of(context)!.season} ${_showDetailsEntity.lastEpisodeToAir!.seasonNumber}',
@@ -141,9 +120,30 @@ class ShowDetails extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
     ));
-
-
     bodyWidgets.add(_buildSeasons());
+
+
+    bodyWidgets.add(Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
+      child: Text(
+        AppLocalizations.of(context)!.companies,
+        style: Theme.of(context).textTheme.headlineSmall,
+        overflow: TextOverflow.ellipsis,
+      ),
+    ));
+    bodyWidgets.add(_buildCompanies());
+
+
+    bodyWidgets.add(Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
+      child: Text(
+        AppLocalizations.of(context)!.networks,
+        style: Theme.of(context).textTheme.headlineSmall,
+        overflow: TextOverflow.ellipsis,
+      ),
+    ));
+    bodyWidgets.add(_buildNetworks());
+
 
     return ListView.builder(
         itemCount: bodyWidgets.length,
@@ -156,20 +156,115 @@ class ShowDetails extends StatelessWidget {
       child: Container(
         width: double.infinity,
         color: Theme.of(context).primaryColor,
-        child: Padding(
-          padding: EdgeInsetsGeometry.symmetric(vertical: 30, horizontal: 10),
-          child: ShowHorizontalCard(
-            searchOnline: searchOnline,
-            id: _showDetailsEntity.id,
-            imgPath: tmdbImgSmallBaseURL + _showDetailsEntity.posterPath!,
-            title: _showDetailsEntity.name!,
-            subtitle: _showDetailsEntity.firstAirDate!,
-            voteAverage: _showDetailsEntity.voteAverage!,
-            textList: _showDetailsEntity.genres!.map((g) => g.name).toList(),
-            onTap: (_) {},
-          ),
-        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(vertical: 30, horizontal: 10),
+              child: ShowHorizontalCard(
+                searchOnline: searchOnline,
+                id: _showDetailsEntity.id,
+                imgPath: tmdbImgSmallBaseURL + _showDetailsEntity.posterPath!,
+                title: _showDetailsEntity.name!,
+                subtitle: _showDetailsEntity.firstAirDate!,
+                voteAverage: _showDetailsEntity.voteAverage!,
+                textList: _showDetailsEntity.genres!.map((g) => g.name).toList(),
+                onTap: (_) {},
+              ),
+            ),
+
+            if (_showDetailsEntity.tagline != null)
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(vertical: 30, horizontal: 10),
+              child: Text(
+                _showDetailsEntity.tagline!,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ),
+          ],
+        )
       )
+    );
+  }
+
+  Widget _buildInfoCard(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
+      child: Card(
+        child: Column(
+          children: [
+            Text(
+                "${AppLocalizations.of(context)!.seasons}: ${_showDetailsEntity.numberOfSeasons}",
+                style: Theme.of(context).textTheme.titleMedium
+            ),
+            Text(
+                "${AppLocalizations.of(context)!.episodes}: ${_showDetailsEntity.numberOfEpisodes}",
+                style: Theme.of(context).textTheme.titleMedium
+            ),
+
+            Text(
+                "${AppLocalizations.of(context)!.languages}: ${_showDetailsEntity.languages?.join(", ")}",
+                style: Theme.of(context).textTheme.titleMedium
+            ),
+
+            Text(
+                "${AppLocalizations.of(context)!.status}: ${_showDetailsEntity.status}",
+                style: Theme.of(context).textTheme.titleMedium
+            ),
+
+            if (_showDetailsEntity.inProduction != null)
+              Text(
+                  _showDetailsEntity.inProduction!
+                      ? "${AppLocalizations.of(context)!.production}: ${AppLocalizations.of(context)!.yes}:"
+                      : "${AppLocalizations.of(context)!.production}: ${AppLocalizations.of(context)!.no}:"
+                  ,
+                  style: Theme.of(context).textTheme.titleMedium
+              ),
+
+            Text(
+                (_showDetailsEntity.episodeRuntime != null)
+                    ? "${AppLocalizations.of(context)!.runtime}: ${_showDetailsEntity.episodeRuntime}"
+                    :"${AppLocalizations.of(context)!.runtime}: ${AppLocalizations.of(context)!.unknown}:"
+                ,
+                style: Theme.of(context).textTheme.titleMedium
+            ),
+
+            Text(
+                (_showDetailsEntity.lastAirDate != null)
+                    ? "${AppLocalizations.of(context)!.lastAired}: ${_showDetailsEntity.lastAirDate}"
+                    : "${AppLocalizations.of(context)!.lastAired}: ${AppLocalizations.of(context)!.unknown}:"
+                ,
+                style: Theme.of(context).textTheme.titleMedium
+            ),
+
+            Text(
+                (_showDetailsEntity.type != null)
+                    ? "${AppLocalizations.of(context)!.type}: ${_showDetailsEntity.type}"
+                    : "${AppLocalizations.of(context)!.type}: ${AppLocalizations.of(context)!.unknown}"
+                ,
+                style: Theme.of(context).textTheme.titleMedium
+            ),
+
+            if (_showDetailsEntity.adult != null)
+              if (_showDetailsEntity.adult!)
+                Text(AppLocalizations.of(context)!.adult, style: Theme.of(context).textTheme.titleMedium),
+
+            if (_showDetailsEntity.homepage != null)
+              InkWell(
+                onTap: () async {
+                  final Uri url = Uri.parse(_showDetailsEntity.homepage!);
+                  if (await canLaunchUrl(url)) {
+                    launchUrl(url);
+                  }
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.homepage,
+                  style: TextStyle(color: AppColors.blue, fontStyle: FontStyle.italic),
+                ),
+              )
+          ],
+        ),
+      ),
     );
   }
 
@@ -231,6 +326,62 @@ class ShowDetails extends StatelessWidget {
         child: _buildShowVerticalCard(
             path: _showDetailsEntity.createdBy![0].profilePath,
             title: _showDetailsEntity.createdBy![0].name!,
+            searchOnline: searchOnline
+        )
+    );
+  }
+
+  Widget _buildCompanies() {
+    if (_showDetailsEntity.companies!.length > 1) {
+      return SizedBox(
+          height: 425,
+          child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _showDetailsEntity.seasons!.length,
+              itemBuilder: (context, idx) {
+                return _buildShowVerticalCard(
+                  path: _showDetailsEntity.companies![idx].logoPath,
+                  title: _showDetailsEntity.companies![idx].name!,
+                  searchOnline: searchOnline,
+                );
+              }
+          )
+      );
+    }
+
+    return Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
+        child: _buildShowVerticalCard(
+            path: _showDetailsEntity.companies![0].logoPath,
+            title: _showDetailsEntity.companies![0].name!,
+            searchOnline: searchOnline
+        )
+    );
+  }
+
+  Widget _buildNetworks() {
+    if (_showDetailsEntity.networks!.length > 1) {
+      return SizedBox(
+          height: 425,
+          child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _showDetailsEntity.networks!.length,
+              itemBuilder: (context, idx) {
+                return _buildShowVerticalCard(
+                  path: _showDetailsEntity.networks![idx].logoPath,
+                  title: _showDetailsEntity.networks![idx].name!,
+                  searchOnline: searchOnline,
+                );
+              }
+          )
+      );
+    }
+
+    return Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
+        child: _buildShowVerticalCard(
+            path: _showDetailsEntity.networks![0].logoPath,
+            title: _showDetailsEntity.networks![0].name!,
             searchOnline: searchOnline
         )
     );

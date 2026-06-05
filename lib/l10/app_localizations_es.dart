@@ -39,11 +39,44 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adult => 'Solo para adultos';
 
   @override
+  String get runtime => 'Duración por episodio';
+
+  @override
+  String get type => 'Tipo';
+
+  @override
   String get overview => 'Sinposis';
 
   @override
   String get createdBy => 'Creado por';
 
   @override
-  String get lastEpisode => 'Ultimo episodio emitido';
+  String get lastEpisode => 'Último episodio emitido';
+
+  @override
+  String get lastAired => 'Última vez emitido el';
+
+  @override
+  String get production => 'En producción';
+
+  @override
+  String get yes => 'si';
+
+  @override
+  String get no => 'no';
+
+  @override
+  String get unknown => 'Desconocido';
+
+  @override
+  String get languages => 'Idiomas';
+
+  @override
+  String get companies => 'Productoras';
+
+  @override
+  String get networks => 'Networks';
+
+  @override
+  String get homepage => 'Donde ver';
 }

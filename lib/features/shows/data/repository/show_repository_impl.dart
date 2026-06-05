@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:sillicont_tv/core/resources/data_state.dart';
 import 'package:sillicont_tv/features/shows/data/datasources/local/app_database.dart';
 import 'package:sillicont_tv/features/shows/data/datasources/remote/tmdb_api_service.dart';
+import 'package:sillicont_tv/features/shows/data/models/companies.dart';
 import 'package:sillicont_tv/features/shows/data/models/creator.dart';
 import 'package:sillicont_tv/features/shows/data/models/genre.dart';
 import 'package:sillicont_tv/features/shows/data/models/season.dart';
@@ -14,6 +15,7 @@ import 'package:sillicont_tv/features/shows/domain/repository/show_repository.da
 
 import '../../domain/entities/show.dart';
 import '../models/episode.dart';
+import '../models/networks.dart';
 
 
 class ShowRepositoryImpl implements ShowRepository {
@@ -97,6 +99,18 @@ class ShowRepositoryImpl implements ShowRepository {
             return SeasonModel.fromJson(s, showId);
       }).toList();
 
+      final List<dynamic> companiesList = result['production_companies'];
+      final companies = companiesList
+          .map((s) {
+        return CompaniesModel.fromJson(s);
+      }).toList();
+
+      final List<dynamic> networksList = result['networks'];
+      final networks = networksList
+          .map((s) {
+        return NetworksModel.fromJson(s);
+      }).toList();
+
       final showDetails = ShowDetailsEntity.fromModels(
         showModel: showModel,
         showDetailsModel: showDetailsModel,
@@ -105,6 +119,8 @@ class ShowRepositoryImpl implements ShowRepository {
         creators: creators,
         languages: result['languages'].cast<String>(),
         seasons: seasons,
+        companies: companies,
+        networks: networks
       );
 
       return DataSuccess(showDetails);
@@ -144,6 +160,22 @@ class ShowRepositoryImpl implements ShowRepository {
         genres.add(genre!);
       }
 
+      final showCompanies = await _appDatabase.showCompaniesDao.getCompaniesByShowId(showId);
+      final companiesId = showCompanies.map((showCompany) => showCompany.companyId).toList();
+      final List<CompaniesModel> companies = [];
+      for (var id in companiesId) {
+        final company = await _appDatabase.companiesDao.getCompanyById(id);
+        companies.add(company!);
+      }
+
+      final showNetworks = await _appDatabase.showNetworksDao.getNetworkByShowId(showId);
+      final networksId = showNetworks.map((showNetwork) => showNetwork.networkId).toList();
+      final List<NetworksModel> networks = [];
+      for (var id in networksId) {
+        final network = await _appDatabase.networksDao.getNetworkById(id);
+        networks.add(network!);
+      }
+
       final seasons = await _appDatabase.seasonDao.getSeasonsByShowId(showId);
 
 
@@ -155,6 +187,8 @@ class ShowRepositoryImpl implements ShowRepository {
         creators: creators,
         languages: showDetailsModel.languages,
         seasons: seasons,
+        companies: companies,
+        networks: networks
       );
 
       return DataSuccess(showDetails);
@@ -192,14 +226,22 @@ class ShowRepositoryImpl implements ShowRepository {
   }) async {
     final episodeModel = EpisodeModel.fromEntity(showDetails.lastEpisodeToAir!);
     final showDetailsModel = ShowDetailsModel.fromEntity(showDetails);
-    final creatorModels = showDetails.createdBy!.map((c) => CreatorModel.fromEntity(c)).toList();
-    final seasonModels = showDetails.seasons!.map((s) => SeasonModel.fromEntity(s, showDetails.id)).toList();
+    final creatorModels = showDetails.createdBy!.map(
+            (c) => CreatorModel.fromEntity(c)).toList();
+    final seasonModels = showDetails.seasons!.map(
+            (s) => SeasonModel.fromEntity(s, showDetails.id)).toList();
+    final companiesModels = showDetails.companies!.map(
+            (c) => CompaniesModel.fromEntity(c)).toList();
+    final networkModels = showDetails.networks!.map(
+            (n) => NetworksModel.fromEntity(n)).toList();
 
     await _appDatabase.saveShowDetailsComplete(
         showDetailsModel,
         episodeModel,
         creatorModels,
-        seasonModels
+        seasonModels,
+        companiesModels,
+        networkModels
     );
   }
 

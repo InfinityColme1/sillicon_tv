@@ -1,14 +1,18 @@
 import 'package:equatable/equatable.dart';
+import 'package:sillicont_tv/features/shows/data/models/companies.dart';
 import 'package:sillicont_tv/features/shows/data/models/creator.dart';
 import 'package:sillicont_tv/features/shows/data/models/genre.dart';
 import 'package:sillicont_tv/features/shows/data/models/show.dart';
 import 'package:sillicont_tv/features/shows/data/models/show_details.dart';
+import 'package:sillicont_tv/features/shows/domain/entities/companies.dart';
 import 'package:sillicont_tv/features/shows/domain/entities/episode.dart';
 import 'package:sillicont_tv/features/shows/domain/entities/genre.dart';
+import 'package:sillicont_tv/features/shows/domain/entities/networks.dart';
 import 'package:sillicont_tv/features/shows/domain/entities/season.dart';
 import 'package:sillicont_tv/features/shows/domain/entities/show.dart';
 
 import '../../data/models/episode.dart';
+import '../../data/models/networks.dart';
 import '../../data/models/season.dart';
 import 'creator.dart';
 
@@ -27,6 +31,10 @@ class ShowDetailsEntity extends ShowEntity {
   final int ? numberOfSeasons;
   final List<SeasonEntity> ? seasons;
   final String ? status;
+  final String ? tagline;
+  final String ? type;
+  final List<NetworksEntity> ? networks;
+  final List<CompaniesEntity> ? companies;
 
   const ShowDetailsEntity({
     required super.id,
@@ -54,7 +62,11 @@ class ShowDetailsEntity extends ShowEntity {
     this.numberOfEpisodes,
     this.numberOfSeasons,
     this.seasons,
-    this.status
+    this.status,
+    this.tagline,
+    this.type,
+    this.networks,
+    this.companies,
   });
 
   @override
@@ -83,7 +95,10 @@ class ShowDetailsEntity extends ShowEntity {
     numberOfEpisodes,
     numberOfSeasons,
     seasons,
-    status
+    status,
+    tagline,
+    networks,
+    companies
   ];
 
   factory ShowDetailsEntity.fromModels({
@@ -94,6 +109,8 @@ class ShowDetailsEntity extends ShowEntity {
     required List<CreatorModel> creators,
     List<String> ? languages,
     required List<SeasonModel> seasons,
+    required List<CompaniesModel> companies,
+    required List<NetworksModel> networks
   }) {
 
     return ShowDetailsEntity(
@@ -122,7 +139,11 @@ class ShowDetailsEntity extends ShowEntity {
       numberOfEpisodes: showDetailsModel.numberOfEpisodes,
       numberOfSeasons: showDetailsModel.numberOfSeasons,
       seasons: seasons.map((s) => SeasonEntity.fromModel(s)).toList(),
-      status: showDetailsModel.status
+      status: showDetailsModel.status,
+      tagline: showDetailsModel.tagline,
+      type: showDetailsModel.type,
+      companies: companies.map((c) => CompaniesEntity.fromModels(c)).toList(),
+      networks: networks.map((n) => NetworksEntity.fromModels(n)).toList()
     );
   }
 
