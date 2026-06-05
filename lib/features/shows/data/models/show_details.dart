@@ -1,5 +1,4 @@
 import 'package:floor/floor.dart';
-import 'package:sillicont_tv/features/shows/data/models/episode.dart';
 import 'package:sillicont_tv/features/shows/domain/entities/show_details.dart';
 
 
@@ -21,6 +20,8 @@ class ShowDetailsModel {
   final int ? numberOfSeasons;
   final List<String> ? languages;
   final String ? status;
+  final String ? tagline;
+  final String ? type;
 
 
   const ShowDetailsModel({
@@ -35,6 +36,8 @@ class ShowDetailsModel {
     this.numberOfSeasons,
     this.languages,
     this.status,
+    this.tagline,
+    this.type,
   });
 
   factory ShowDetailsModel.fromJson(Map<String, dynamic> map) {
@@ -53,7 +56,9 @@ class ShowDetailsModel {
         numberOfEpisodes: map['number_of_episodes'],
         numberOfSeasons: map['number_of_seasons'],
         languages: languages.cast<String>(),
-        status: map['status']
+        status: map['status'],
+        tagline: map['tagline'],
+        type: map['type'],
     );
   }
 
@@ -69,7 +74,9 @@ class ShowDetailsModel {
         numberOfEpisodes: entt.numberOfEpisodes,
         numberOfSeasons: entt.numberOfSeasons,
         languages: entt.languages,
-        status: entt.status
+        status: entt.status,
+        tagline: entt.tagline,
+        type: entt.type,
     );
   }
 }

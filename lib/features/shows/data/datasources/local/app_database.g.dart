@@ -84,9 +84,17 @@ class _$AppDatabase extends AppDatabase {
 
   ShowDetailsDao? _showDetailsDaoInstance;
 
+  CompaniesDao? _companiesDaoInstance;
+
+  NetworksDao? _networksDaoInstance;
+
   ShowCreatorsDao? _showCreatorsDaoInstance;
 
   ShowGenresDao? _showGenresDaoInstance;
+
+  ShowCompaniesDao? _showCompaniesDaoInstance;
+
+  ShowNetworksDao? _showNetworksDaoInstance;
 
   Future<sqflite.Database> open(
     String path,
@@ -94,7 +102,7 @@ class _$AppDatabase extends AppDatabase {
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 2,
+      version: 3,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -120,11 +128,19 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `CreatorsModels` (`id` INTEGER NOT NULL, `name` TEXT, `profilePath` TEXT, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ShowDetailsModels` (`id` INTEGER NOT NULL, `adult` INTEGER, `episodeRuntime` INTEGER, `homepage` TEXT, `inProduction` INTEGER, `lastAirDate` TEXT, `idLastEpisodeToAir` INTEGER, `numberOfEpisodes` INTEGER, `numberOfSeasons` INTEGER, `languages` TEXT, `status` TEXT, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `CompaniesModel` (`id` INTEGER NOT NULL, `name` TEXT, `logoPath` TEXT, `originCountry` TEXT, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `NetworksModel` (`id` INTEGER NOT NULL, `name` TEXT, `logoPath` TEXT, `originCountry` TEXT, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `ShowDetailsModels` (`id` INTEGER NOT NULL, `adult` INTEGER, `episodeRuntime` INTEGER, `homepage` TEXT, `inProduction` INTEGER, `lastAirDate` TEXT, `idLastEpisodeToAir` INTEGER, `numberOfEpisodes` INTEGER, `numberOfSeasons` INTEGER, `languages` TEXT, `status` TEXT, `tagline` TEXT, `type` TEXT, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ShowCreators` (`showId` INTEGER NOT NULL, `creatorId` INTEGER NOT NULL, PRIMARY KEY (`showId`, `creatorId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ShowGenres` (`id` INTEGER NOT NULL, `showId` INTEGER NOT NULL, `genreId` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `ShowCompaniesModel` (`showId` INTEGER NOT NULL, `companyId` INTEGER NOT NULL, PRIMARY KEY (`showId`, `companyId`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `ShowNetworkModel` (`showId` INTEGER NOT NULL, `networkId` INTEGER NOT NULL, PRIMARY KEY (`showId`, `networkId`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -164,6 +180,16 @@ class _$AppDatabase extends AppDatabase {
   }
 
   @override
+  CompaniesDao get companiesDao {
+    return _companiesDaoInstance ??= _$CompaniesDao(database, changeListener);
+  }
+
+  @override
+  NetworksDao get networksDao {
+    return _networksDaoInstance ??= _$NetworksDao(database, changeListener);
+  }
+
+  @override
   ShowCreatorsDao get showCreatorsDao {
     return _showCreatorsDaoInstance ??=
         _$ShowCreatorsDao(database, changeListener);
@@ -172,6 +198,18 @@ class _$AppDatabase extends AppDatabase {
   @override
   ShowGenresDao get showGenresDao {
     return _showGenresDaoInstance ??= _$ShowGenresDao(database, changeListener);
+  }
+
+  @override
+  ShowCompaniesDao get showCompaniesDao {
+    return _showCompaniesDaoInstance ??=
+        _$ShowCompaniesDao(database, changeListener);
+  }
+
+  @override
+  ShowNetworksDao get showNetworksDao {
+    return _showNetworksDaoInstance ??=
+        _$ShowNetworksDao(database, changeListener);
   }
 }
 
@@ -500,7 +538,9 @@ class _$ShowDetailsDao extends ShowDetailsDao {
                   'numberOfEpisodes': item.numberOfEpisodes,
                   'numberOfSeasons': item.numberOfSeasons,
                   'languages': _strListConverter.encode(item.languages),
-                  'status': item.status
+                  'status': item.status,
+                  'tagline': item.tagline,
+                  'type': item.type
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -527,7 +567,9 @@ class _$ShowDetailsDao extends ShowDetailsDao {
             numberOfEpisodes: row['numberOfEpisodes'] as int?,
             numberOfSeasons: row['numberOfSeasons'] as int?,
             languages: _strListConverter.decode(row['languages'] as String?),
-            status: row['status'] as String?));
+            status: row['status'] as String?,
+            tagline: row['tagline'] as String?,
+            type: row['type'] as String?));
   }
 
   @override
@@ -546,7 +588,9 @@ class _$ShowDetailsDao extends ShowDetailsDao {
             numberOfEpisodes: row['numberOfEpisodes'] as int?,
             numberOfSeasons: row['numberOfSeasons'] as int?,
             languages: _strListConverter.decode(row['languages'] as String?),
-            status: row['status'] as String?),
+            status: row['status'] as String?,
+            tagline: row['tagline'] as String?,
+            type: row['type'] as String?),
         arguments: [id]);
   }
 
@@ -566,13 +610,117 @@ class _$ShowDetailsDao extends ShowDetailsDao {
             numberOfEpisodes: row['numberOfEpisodes'] as int?,
             numberOfSeasons: row['numberOfSeasons'] as int?,
             languages: _strListConverter.decode(row['languages'] as String?),
-            status: row['status'] as String?));
+            status: row['status'] as String?,
+            tagline: row['tagline'] as String?,
+            type: row['type'] as String?));
   }
 
   @override
   Future<void> insertShowDetails(ShowDetailsModel showDetails) async {
     await _showDetailsModelInsertionAdapter.insert(
         showDetails, OnConflictStrategy.replace);
+  }
+}
+
+class _$CompaniesDao extends CompaniesDao {
+  _$CompaniesDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _companiesModelInsertionAdapter = InsertionAdapter(
+            database,
+            'CompaniesModel',
+            (CompaniesModel item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'logoPath': item.logoPath,
+                  'originCountry': item.originCountry
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<CompaniesModel> _companiesModelInsertionAdapter;
+
+  @override
+  Future<List<CompaniesModel>> getCompanies() async {
+    return _queryAdapter.queryList('SELECT * FROM CompaniesModel',
+        mapper: (Map<String, Object?> row) => CompaniesModel(
+            id: row['id'] as int,
+            name: row['name'] as String?,
+            logoPath: row['logoPath'] as String?,
+            originCountry: row['originCountry'] as String?));
+  }
+
+  @override
+  Future<CompaniesModel?> getCompanyById(int id) async {
+    return _queryAdapter.query('SELECT * FROM CompaniesModel WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => CompaniesModel(
+            id: row['id'] as int,
+            name: row['name'] as String?,
+            logoPath: row['logoPath'] as String?,
+            originCountry: row['originCountry'] as String?),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> insertCompany(CompaniesModel company) async {
+    await _companiesModelInsertionAdapter.insert(
+        company, OnConflictStrategy.ignore);
+  }
+}
+
+class _$NetworksDao extends NetworksDao {
+  _$NetworksDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _networksModelInsertionAdapter = InsertionAdapter(
+            database,
+            'NetworksModel',
+            (NetworksModel item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'logoPath': item.logoPath,
+                  'originCountry': item.originCountry
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<NetworksModel> _networksModelInsertionAdapter;
+
+  @override
+  Future<List<NetworksModel>> getNetworks() async {
+    return _queryAdapter.queryList('SELECT * FROM NetworksModel',
+        mapper: (Map<String, Object?> row) => NetworksModel(
+            id: row['id'] as int,
+            name: row['name'] as String?,
+            logoPath: row['logoPath'] as String?,
+            originCountry: row['originCountry'] as String?));
+  }
+
+  @override
+  Future<NetworksModel?> getNetworkById(int id) async {
+    return _queryAdapter.query('SELECT * FROM NetworksModel WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => NetworksModel(
+            id: row['id'] as int,
+            name: row['name'] as String?,
+            logoPath: row['logoPath'] as String?,
+            originCountry: row['originCountry'] as String?),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> insertNetwork(NetworksModel network) async {
+    await _networksModelInsertionAdapter.insert(
+        network, OnConflictStrategy.ignore);
   }
 }
 
@@ -665,6 +813,95 @@ class _$ShowGenresDao extends ShowGenresDao {
   Future<void> insertShowGenre(ShowGenresModel showGenre) async {
     await _showGenresModelInsertionAdapter.insert(
         showGenre, OnConflictStrategy.abort);
+  }
+}
+
+class _$ShowCompaniesDao extends ShowCompaniesDao {
+  _$ShowCompaniesDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _showCompaniesModelInsertionAdapter = InsertionAdapter(
+            database,
+            'ShowCompaniesModel',
+            (ShowCompaniesModel item) => <String, Object?>{
+                  'showId': item.showId,
+                  'companyId': item.companyId
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<ShowCompaniesModel>
+      _showCompaniesModelInsertionAdapter;
+
+  @override
+  Future<List<ShowCompaniesModel>> getShowCompany() async {
+    return _queryAdapter.queryList('SELECT * FROM ShowCompanyModel',
+        mapper: (Map<String, Object?> row) => ShowCompaniesModel(
+            showId: row['showId'] as int, companyId: row['companyId'] as int));
+  }
+
+  @override
+  Future<List<ShowCompaniesModel>> getCompaniesByShowId(int id) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM ShowCompanyModel WHERE showId = ?1',
+        mapper: (Map<String, Object?> row) => ShowCompaniesModel(
+            showId: row['showId'] as int, companyId: row['companyId'] as int),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> insertShowCompany(ShowCompaniesModel showCreator) async {
+    await _showCompaniesModelInsertionAdapter.insert(
+        showCreator, OnConflictStrategy.abort);
+  }
+}
+
+class _$ShowNetworksDao extends ShowNetworksDao {
+  _$ShowNetworksDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _showNetworkModelInsertionAdapter = InsertionAdapter(
+            database,
+            'ShowNetworkModel',
+            (ShowNetworkModel item) => <String, Object?>{
+                  'showId': item.showId,
+                  'networkId': item.networkId
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<ShowNetworkModel> _showNetworkModelInsertionAdapter;
+
+  @override
+  Future<List<ShowNetworkModel>> getShowNetwork() async {
+    return _queryAdapter.queryList('SELECT * FROM ShowNetworkModel',
+        mapper: (Map<String, Object?> row) => ShowNetworkModel(
+            showId: row['showId'] as int, networkId: row['networkId'] as int));
+  }
+
+  @override
+  Future<List<ShowNetworkModel>> getNetworkByShowId(int id) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM ShowNetworkModel WHERE showId = ?1',
+        mapper: (Map<String, Object?> row) => ShowNetworkModel(
+            showId: row['showId'] as int, networkId: row['networkId'] as int),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> insertShowNetwork(ShowNetworkModel showCreator) async {
+    await _showNetworkModelInsertionAdapter.insert(
+        showCreator, OnConflictStrategy.abort);
   }
 }
 

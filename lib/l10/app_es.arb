@@ -13,7 +13,19 @@
   "episode": "Episodio",
   "status": "Estado",
   "adult": "Solo para adultos",
+  "runtime": "Duración por episodio",
+  "type": "Tipo",
   "overview": "Sinposis",
   "createdBy": "Creado por",
-  "lastEpisode": "Ultimo episodio emitido"
+  "lastEpisode": "Último episodio emitido",
+  "lastAired": "Última vez emitido el",
+  "production": "En producción",
+  "yes": "si",
+  "no": "no",
+  "unknown": "Desconocido",
+  "languages": "Idiomas",
+  "companies": "Productoras",
+  "networks": "Networks",
+  "homepage": "Donde ver"
+
 }

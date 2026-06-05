@@ -39,6 +39,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adult => 'For adults only';
 
   @override
+  String get runtime => 'Episode runtime';
+
+  @override
+  String get type => 'Type';
+
+  @override
   String get overview => 'Overview';
 
   @override
@@ -46,4 +52,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lastEpisode => 'Last aired episode';
+
+  @override
+  String get lastAired => 'Last aired in';
+
+  @override
+  String get production => 'In production';
+
+  @override
+  String get yes => 'yes';
+
+  @override
+  String get no => 'no';
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get languages => 'Languages';
+
+  @override
+  String get companies => 'Producer Companies';
+
+  @override
+  String get networks => 'Networks';
+
+  @override
+  String get homepage => 'Homepage';
 }

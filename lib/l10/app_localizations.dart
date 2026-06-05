@@ -158,6 +158,18 @@ abstract class AppLocalizations {
   /// **'For adults only'**
   String get adult;
 
+  /// No description provided for @runtime.
+  ///
+  /// In en, this message translates to:
+  /// **'Episode runtime'**
+  String get runtime;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
   /// No description provided for @overview.
   ///
   /// In en, this message translates to:
@@ -175,6 +187,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last aired episode'**
   String get lastEpisode;
+
+  /// No description provided for @lastAired.
+  ///
+  /// In en, this message translates to:
+  /// **'Last aired in'**
+  String get lastAired;
+
+  /// No description provided for @production.
+  ///
+  /// In en, this message translates to:
+  /// **'In production'**
+  String get production;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'no'**
+  String get no;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
+
+  /// No description provided for @languages.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get languages;
+
+  /// No description provided for @companies.
+  ///
+  /// In en, this message translates to:
+  /// **'Producer Companies'**
+  String get companies;
+
+  /// No description provided for @networks.
+  ///
+  /// In en, this message translates to:
+  /// **'Networks'**
+  String get networks;
+
+  /// No description provided for @homepage.
+  ///
+  /// In en, this message translates to:
+  /// **'Homepage'**
+  String get homepage;
 }
 
 class _AppLocalizationsDelegate
