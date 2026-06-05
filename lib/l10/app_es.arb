@@ -1,0 +1,19 @@
+{
+  "@@locale": "es",
+  "language": "Castellano",
+  "@language": {
+    "description": "Idioma seleccionado"
+  },
+  "popular": "Popular ahora",
+  "firstAired": "Emitido el",
+  "airedIn": "Emitido el",
+  "seasons": "Temporadas",
+  "season": "Temporada",
+  "episodes": "Episodios",
+  "episode": "Episodio",
+  "status": "Estado",
+  "adult": "Solo para adultos",
+  "overview": "Sinposis",
+  "createdBy": "Creado por",
+  "lastEpisode": "Ultimo episodio emitido"
+}

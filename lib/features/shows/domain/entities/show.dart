@@ -1,12 +1,13 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
+import 'package:sillicont_tv/features/shows/data/models/genre.dart';
+import 'package:sillicont_tv/features/shows/data/models/show.dart';
+import 'package:sillicont_tv/features/shows/domain/entities/genre.dart';
 
 class ShowEntity extends Equatable {
+  final int id;
   final String ? backdropPath;
   final String ? firstAirDate;
-  final List<int> ? genreIds;
-  final List<String> ? genreNames;
-  final int ? id;
+  final List<GenreEntity> ? genres;
   final String ? name;
   final List<String> ? originCountry;
   final String ? originalLanguage;
@@ -18,11 +19,10 @@ class ShowEntity extends Equatable {
   final int ? voteCount;
 
   const ShowEntity({
+    required this.id,
     this.backdropPath, 
-    this.firstAirDate, 
-    this.genreIds,
-    this.genreNames,
-    this.id, 
+    this.firstAirDate,
+    this.genres,
     this.name, 
     this.originCountry, 
     this.originalLanguage, 
@@ -36,11 +36,10 @@ class ShowEntity extends Equatable {
 
 
   @override
-  List<Object?> get props => [ 
+  List<Object?> get props => [
+    id,
     backdropPath, 
-    firstAirDate, 
-    genreIds, 
-    id, 
+    firstAirDate,
     name, 
     originCountry, 
     originalLanguage, 
@@ -52,11 +51,29 @@ class ShowEntity extends Equatable {
     voteCount,
   ];
 
+  factory ShowEntity.fromModel(ShowModel model, List<GenreModel> ? genreNames) {
+    return ShowEntity(
+      id: model.id,
+      backdropPath: model.backdropPath,
+      firstAirDate: model.firstAirDate,
+      genres: genreNames?.map((g) => GenreEntity.fromModel(g)).toList() ?? [],
+      name: model.name,
+      originCountry: model.originCountry,
+      originalLanguage: model.originalLanguage,
+      originalName: model.originalName,
+      overview: model.overview,
+      popularity: model.popularity,
+      posterPath: model.posterPath,
+      voteAverage: model.voteAverage,
+      voteCount: model.voteCount,
+    );
+  }
+
   ShowEntity copyWith({
     String ? backdropPath,
     String ? firstAirDate,
     List<int> ? genreIds,
-    List<String> ? genreNames,
+    List<GenreEntity> ? genres,
     int ? id,
     String ? name,
     List<String> ? originCountry,
@@ -71,8 +88,7 @@ class ShowEntity extends Equatable {
     return ShowEntity(
       backdropPath: backdropPath ?? this.backdropPath,
       firstAirDate: firstAirDate ?? this.firstAirDate,
-      genreIds: genreIds ?? this.genreIds,
-      genreNames: genreNames ?? this.genreNames,
+      genres: genres ?? this.genres,
       id: id ?? this.id,
       name: name ?? this.name,
       originCountry: originCountry ?? this.originCountry,

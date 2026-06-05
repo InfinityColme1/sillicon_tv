@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:sillicont_tv/features/shows/data/models/season.dart';
 
 class SeasonEntity extends Equatable {
+  final int ? id;
   final String ? airDate;
   final int ? episodeCount;
   final String ? name;
@@ -10,6 +12,7 @@ class SeasonEntity extends Equatable {
   final double ? voteAverage;
 
   const  SeasonEntity({
+    this.id,
     this.airDate,
     this.episodeCount,
     this.name,
@@ -22,6 +25,7 @@ class SeasonEntity extends Equatable {
   @override
 
   List<Object?> get props => [
+    id,
     airDate,
     episodeCount,
     name,
@@ -30,6 +34,19 @@ class SeasonEntity extends Equatable {
     seasonNumber,
     voteAverage
   ];
+
+  factory SeasonEntity.fromModel(SeasonModel model) {
+    return SeasonEntity(
+      id: model.id,
+      airDate: model.airDate,
+      episodeCount: model.episodeCount,
+      name: model.name,
+      overview: model.overview,
+      posterPath: model.posterPath,
+      seasonNumber: model.seasonNumber,
+      voteAverage: model.voteAverage,
+    );
+  }
 
 
 

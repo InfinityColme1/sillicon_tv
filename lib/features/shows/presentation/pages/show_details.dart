@@ -4,28 +4,34 @@ import 'package:sillicont_tv/core/constants/constants.dart';
 import 'package:sillicont_tv/features/shows/domain/entities/show_details.dart';
 import 'package:sillicont_tv/features/shows/presentation/bloc/show_bloc.dart';
 import 'package:sillicont_tv/features/shows/presentation/bloc/show_event.dart';
+import 'package:sillicont_tv/features/shows/presentation/bloc/show_state.dart';
 import 'package:sillicont_tv/features/shows/presentation/widgets/show_horizontal_card.dart';
+import 'package:sillicont_tv/l10/app_localizations.dart';
 
 import '../widgets/show_vertical_card.dart';
 
 class ShowDetails extends StatelessWidget {
 
   final ShowDetailsEntity _showDetailsEntity;
+  final bool searchOnline;
 
-  const ShowDetails({super.key, required this._showDetailsEntity});
+  const ShowDetails({
+    super.key,
+    required this._showDetailsEntity,
+    required this.searchOnline
+  });
 
   @override
   Widget build(BuildContext context) {
-
     return PopScope(
-      onPopInvokedWithResult: (popped, result) {
-        if (popped) {
-          context.read<ShowBloc>().add(GetPopularShows());
-        }
-      },
+        onPopInvokedWithResult: (popped, result) {
+          if (popped) {
+            context.read<ShowBloc>().add(ReloadShowList());
+          }
+        },
         child: Scaffold(
           appBar: _buildAppBar(context),
-          body: _buildBody(context),
+          body: _buildBody(context, searchOnline),
         )
     );
   }
@@ -45,10 +51,10 @@ class ShowDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context, bool searchOnline) {
     final List<Widget> bodyWidgets = [];
 
-    bodyWidgets.add(_buildHeader(context));
+    bodyWidgets.add(_buildHeader(context, searchOnline));
 
     bodyWidgets.add(Padding(
       padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
@@ -56,20 +62,20 @@ class ShowDetails extends StatelessWidget {
         child: Column(
           children: [
             Text(
-                "Seasons: ${_showDetailsEntity.numberOfSeasons}",
+                "${AppLocalizations.of(context)!.seasons}: ${_showDetailsEntity.numberOfSeasons}",
                 style: Theme.of(context).textTheme.titleMedium
             ),
             Text(
-                "Episodes: ${_showDetailsEntity.numberOfEpisodes}",
+                "${AppLocalizations.of(context)!.episodes}: ${_showDetailsEntity.numberOfEpisodes}",
                 style: Theme.of(context).textTheme.titleMedium
             ),
             Text(
-                "Status: ${_showDetailsEntity.status}",
+                "${AppLocalizations.of(context)!.seasons}: ${_showDetailsEntity.status}",
                 style: Theme.of(context).textTheme.titleMedium
             ),
             if (_showDetailsEntity.adult != null)
               if (_showDetailsEntity.adult!)
-                Text("For adults only", style: Theme.of(context).textTheme.titleMedium),
+                Text(AppLocalizations.of(context)!.adult, style: Theme.of(context).textTheme.titleMedium),
           ],
         ),
       ),
@@ -78,7 +84,7 @@ class ShowDetails extends StatelessWidget {
     bodyWidgets.add(Padding(
       padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
       child: Text(
-        "Overview",
+        AppLocalizations.of(context)!.overview,
         style: Theme.of(context).textTheme.headlineSmall,
         overflow: TextOverflow.ellipsis,
       ),
@@ -96,7 +102,7 @@ class ShowDetails extends StatelessWidget {
     bodyWidgets.add(Padding(
       padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
       child: Text(
-        "Created by",
+        AppLocalizations.of(context)!.createdBy,
         style: Theme.of(context).textTheme.headlineSmall,
         overflow: TextOverflow.ellipsis,
       ),
@@ -108,7 +114,7 @@ class ShowDetails extends StatelessWidget {
     bodyWidgets.add(Padding(
       padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
       child: Text(
-        "Last aired episode",
+        AppLocalizations.of(context)!.lastEpisode,
         style: Theme.of(context).textTheme.headlineSmall,
         overflow: TextOverflow.ellipsis,
       ),
@@ -118,18 +124,19 @@ class ShowDetails extends StatelessWidget {
       _buildShowVerticalCard(
           path: _showDetailsEntity.lastEpisodeToAir!.stillPath,
           title: _showDetailsEntity.lastEpisodeToAir!.name!,
+          searchOnline: searchOnline,
           subtitle: "Aired in ${_showDetailsEntity.lastEpisodeToAir!.airDate!}",
           voteAverage: _showDetailsEntity.lastEpisodeToAir!.voteAverage!,
           textList: [
-            'Season ${_showDetailsEntity.lastEpisodeToAir!.seasonNumber}',
-            'Episode ${_showDetailsEntity.lastEpisodeToAir!.episodeNumber}']
+            '${AppLocalizations.of(context)!.season} ${_showDetailsEntity.lastEpisodeToAir!.seasonNumber}',
+            '${AppLocalizations.of(context)!.episode} ${_showDetailsEntity.lastEpisodeToAir!.episodeNumber}']
       )
     );
 
     bodyWidgets.add(Padding(
       padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
       child: Text(
-        "Seasons",
+        AppLocalizations.of(context)!.seasons,
         style: Theme.of(context).textTheme.headlineSmall,
         overflow: TextOverflow.ellipsis,
       ),
@@ -144,7 +151,7 @@ class ShowDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, bool searchOnline) {
     return Center(
       child: Container(
         width: double.infinity,
@@ -152,12 +159,13 @@ class ShowDetails extends StatelessWidget {
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(vertical: 30, horizontal: 10),
           child: ShowHorizontalCard(
-            id: _showDetailsEntity.id!,
+            searchOnline: searchOnline,
+            id: _showDetailsEntity.id,
             imgPath: tmdbImgSmallBaseURL + _showDetailsEntity.posterPath!,
             title: _showDetailsEntity.name!,
             subtitle: _showDetailsEntity.firstAirDate!,
             voteAverage: _showDetailsEntity.voteAverage!,
-            textList: _showDetailsEntity.genreNames!,
+            textList: _showDetailsEntity.genres!.map((g) => g.name).toList(),
             onTap: (_) {},
           ),
         ),
@@ -175,7 +183,8 @@ class ShowDetails extends StatelessWidget {
               itemBuilder: (context, idx) {
                 return _buildShowVerticalCard(
                     path: _showDetailsEntity.createdBy![idx].profilePath,
-                    title: _showDetailsEntity.createdBy![idx].name!
+                    title: _showDetailsEntity.createdBy![idx].name!,
+                    searchOnline: searchOnline
                 );
               }
           )
@@ -186,7 +195,8 @@ class ShowDetails extends StatelessWidget {
         padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
         child: _buildShowVerticalCard(
             path: _showDetailsEntity.createdBy![0].profilePath,
-            title: _showDetailsEntity.createdBy![0].name!
+            title: _showDetailsEntity.createdBy![0].name!,
+            searchOnline: searchOnline
         )
     );
   }
@@ -204,11 +214,12 @@ class ShowDetails extends StatelessWidget {
                 return _buildShowVerticalCard(
                   path: _showDetailsEntity.seasons![idx].posterPath,
                   title: _showDetailsEntity.seasons![idx].name!,
-                  subtitle: "Aired in: ${_showDetailsEntity.seasons![idx].airDate}",
+                  searchOnline: searchOnline,
+                  subtitle: "${AppLocalizations.of(context)!.airedIn} ${_showDetailsEntity.seasons![idx].airDate}",
                   voteAverage: _showDetailsEntity.seasons![idx].voteAverage,
                   textList: [
-                    'Season ${_showDetailsEntity.seasons![idx].seasonNumber}',
-                    'Episodes: $epCount'],
+                    '${AppLocalizations.of(context)!.season} ${_showDetailsEntity.seasons![idx].seasonNumber}',
+                    '${AppLocalizations.of(context)!.episodes} $epCount'],
                 );
               }
           )
@@ -219,7 +230,8 @@ class ShowDetails extends StatelessWidget {
         padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
         child: _buildShowVerticalCard(
             path: _showDetailsEntity.createdBy![0].profilePath,
-            title: _showDetailsEntity.createdBy![0].name!
+            title: _showDetailsEntity.createdBy![0].name!,
+            searchOnline: searchOnline
         )
     );
   }
@@ -229,7 +241,9 @@ class ShowDetails extends StatelessWidget {
     required String title,
     String ? subtitle,
     double ? voteAverage,
-    List<String> ? textList}
+    List<String> ? textList,
+    required bool searchOnline,
+  }
   ) {
     if (path != null) {
       return ShowVerticalCard(
@@ -238,6 +252,7 @@ class ShowDetails extends StatelessWidget {
         subtitle: subtitle,
         voteAverage: voteAverage,
         textList: textList,
+        searchOnline: searchOnline,
       );
     }
     return ShowVerticalCard(
@@ -247,6 +262,7 @@ class ShowDetails extends StatelessWidget {
       voteAverage: voteAverage,
       textList: textList,
       unknown: true,
+      searchOnline: searchOnline,
     );
   }
 }

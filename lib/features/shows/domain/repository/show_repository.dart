@@ -7,15 +7,24 @@ import '../entities/show_details.dart';
 
 abstract class ShowRepository {
 
-  Future<DataState<List<ShowEntity>>> getPopularShowEntities({
+  Future<DataState<List<ShowEntity>>> getPopularShowEntitiesFromAPI({
     String ? language,
     int ? page
   });
 
-  Future<DataState<List<GenreEntity>>> getTVGenres({String ? language});
+  Future<DataState<List<GenreEntity>>> getTVGenresFromAPI({String ? language});
 
-  Future<DataState<ShowDetailsEntity>> getShowDetails({
-    int showId,
+  Future<DataState<ShowDetailsEntity>> getShowDetailsFromAPI({
+    required int showId,
     String ? language
   });
+
+  Future<void> saveShowEntity({required ShowEntity show});
+
+  Future<DataState<List<ShowEntity>>> getShowEntitiesFromLocal();
+
+
+  Future<void> saveShowDetails({required ShowDetailsEntity showDetails});
+
+  Future<DataState<ShowDetailsEntity>> getShowDetailsFromLocal({required int showId});
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sillicont_tv/features/shows/presentation/bloc/show_bloc.dart';
 
+import '../../../../core/constants/constants.dart';
 import '../bloc/show_event.dart';
 
 class ShowHorizontalCard extends StatelessWidget {
@@ -12,6 +13,7 @@ class ShowHorizontalCard extends StatelessWidget {
   final String subtitle;
   final double voteAverage;
   final List<String> textList;
+  final bool searchOnline;
   final Function(ShowEvent event) onTap;
 
   const ShowHorizontalCard({
@@ -22,6 +24,7 @@ class ShowHorizontalCard extends StatelessWidget {
     required this.subtitle,
     required this.voteAverage,
     required this.textList,
+    required this.searchOnline,
     required this.onTap
   });
 
@@ -31,20 +34,27 @@ class ShowHorizontalCard extends StatelessWidget {
       padding: EdgeInsetsGeometry.symmetric(vertical: 10),
       child: Card(
         child: InkWell(
-          onTap: () => onTap(GetShowDetails(showId: id)),
+          onTap: () => onTap(GetShowDetails(showId: id, searchOnline: searchOnline)),
           child: Row(
             children: [
 
-              Image.network(
-                imgPath,
+              searchOnline
+              ? Image.network(
+                  imgPath,
+                  width: 100,
+                  height: 150,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, progress) {
+                    return progress == null
+                        ? child
+                        : LinearProgressIndicator();
+                  },
+                )
+              : Image.asset(
+                unknownImg,
                 width: 100,
                 height: 150,
                 fit: BoxFit.cover,
-                loadingBuilder: (context, child, progress) {
-                  return progress == null
-                      ? child
-                      : LinearProgressIndicator();
-                },
               ),
 
               SizedBox(width: 10),
@@ -58,7 +68,7 @@ class ShowHorizontalCard extends StatelessWidget {
                       SizedBox(height: 15),
                       Row(children: [Icon(Icons.star), Text(voteAverage.toString())]),
                       if (textList.isNotEmpty)
-                        Text(textList.join(','), overflow: TextOverflow.clip,)
+                        Text(textList.join(' '), overflow: TextOverflow.clip,)
                     ],
                   )
               )

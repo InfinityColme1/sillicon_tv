@@ -34,8 +34,20 @@ class TmdbApiService {
         .toList();
   }
 
+  Future<ShowModel> getShowModel(
+      int showId,
+      String ? language) async {
+
+    var result = await dio.get(
+        '/3/tv/$showId',
+        queryParameters: {'language': language, 'api_key': dotenv.env['API_KEY']}
+    );
+
+    return ShowModel.fromJson(result.data);
+  }
+
   Future<ShowDetailsModel> getShowDetails(
-      int ? showId,
+      int showId,
       String ? language) async {
 
     var result = await dio.get(
@@ -44,5 +56,17 @@ class TmdbApiService {
     );
 
     return ShowDetailsModel.fromJson(result.data);
+  }
+
+  Future<Map<String, dynamic>> getShowDetailsRAW(
+      int showId,
+      String ? language) async {
+
+    var result = await dio.get(
+        '/3/tv/$showId',
+        queryParameters: {'language': language, 'api_key': dotenv.env['API_KEY']}
+    );
+
+    return result.data;
   }
 }
