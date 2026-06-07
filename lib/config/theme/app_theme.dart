@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sillicont_tv/config/theme/app_colors.dart';
 
 class AppTheme {
+
   static final lightTheme = ThemeData (
     primaryColor: AppColors.primary,
     scaffoldBackgroundColor: AppColors.background,
@@ -63,7 +64,7 @@ class AppTheme {
     cardTheme: CardThemeData(
       color: AppColors.secondary,
       elevation: 1,
-      clipBehavior: .hardEdge,
+      clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
     ),
 
@@ -71,6 +72,78 @@ class AppTheme {
       circularTrackColor: AppColors.primary,
       refreshBackgroundColor: AppColors.black,
       linearTrackColor: AppColors.primary
+    ),
+  );
+
+  static final darkTheme = ThemeData(
+    primaryColor: AppColors.primaryDark,
+    scaffoldBackgroundColor: AppColors.gray,
+    brightness: Brightness.dark,
+    fontFamily: 'Google Sans Flex',
+    iconTheme: IconThemeData(color: AppColors.primaryDark),
+    appBarTheme: AppBarTheme(
+      backgroundColor: AppColors.primaryDark,
+      elevation: 0,
+      centerTitle: true,
+    ),
+    textTheme: TextTheme(
+
+      bodyMedium: TextStyle(
+          color: AppColors.white,
+          fontSize: 18,
+          fontFamily: 'Google Sans Flex',
+          fontWeight: FontWeight(400)
+      ),
+
+      titleLarge: TextStyle(
+          color: AppColors.white,
+          fontSize: 20,
+          fontFamily: 'Google Sans Flex',
+          fontWeight: FontWeight(500)
+      ),
+
+      titleMedium: TextStyle(
+          color: AppColors.white,
+          fontSize: 18,
+          fontFamily: 'Google Sans Flex',
+          fontWeight: FontWeight(500)
+      ),
+
+      titleSmall: TextStyle(
+          color: AppColors.white,
+          fontSize: 16,
+          fontFamily: 'Google Sans Flex',
+          fontWeight: FontWeight(500)
+      ),
+
+
+      headlineMedium: TextStyle(
+        color: AppColors.white,
+        fontSize: 27,
+        fontFamily: 'Google Sans Flex',
+        fontWeight: FontWeight(600),
+      ),
+
+      headlineSmall: TextStyle(
+        color: AppColors.white,
+        fontSize: 25,
+        fontFamily: 'Google Sans Flex',
+        fontWeight: FontWeight(500),
+      ),
+
+    ),
+
+    cardTheme: CardThemeData(
+        color: AppColors.secondaryDark,
+        elevation: 1,
+        clipBehavior: Clip.hardEdge,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+    ),
+
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+        circularTrackColor: AppColors.primary,
+        refreshBackgroundColor: AppColors.black,
+        linearTrackColor: AppColors.primary
     ),
   );
 }

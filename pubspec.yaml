@@ -26,12 +26,17 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  flutter_localization:
+  sqflite:
   flutter_bloc:
+  flutter_native_splash:
   equatable:
   get_it: 
   floor:
-  dio: 
-  flutter_dotenv: 
+  dio:
+  flutter_dotenv:
+  url_launcher:
+  intl: any
 
 dev_dependencies:
   flutter_test:
@@ -46,10 +51,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
+  generate: true
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:

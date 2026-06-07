@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:sillicont_tv/core/api/tmdb_client.dart';
+import 'package:sillicont_tv/features/shows/data/datasources/local/app_database.dart';
 import 'package:sillicont_tv/features/shows/data/datasources/remote/tmdb_api_service.dart';
 import 'package:sillicont_tv/features/shows/data/repository/show_repository_impl.dart';
 import 'package:sillicont_tv/features/shows/domain/repository/show_repository.dart';
@@ -13,6 +14,9 @@ final getIt = GetIt.instance;
 
 Future<void> initializeDependencies() async {
 
+  final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  getIt.registerSingleton<AppDatabase>(database);
+
   // Client for tmdb api service
   getIt.registerSingleton<TmdbClient>(TmdbClient());
 
@@ -22,7 +26,10 @@ Future<void> initializeDependencies() async {
   getIt.registerLazySingleton(() => TmdbApiService(dio: getIt()));
 
   // Repositories
-  getIt.registerLazySingleton<ShowRepository>(() => ShowRepositoryImpl(showDatasource: getIt()));
+  getIt.registerLazySingleton<ShowRepository>(() => ShowRepositoryImpl(
+      showDatasource: getIt(),
+      appDatabase: getIt()
+  ));
 
   // Use cases
   getIt.registerSingleton<GetPopularUseCase>(GetPopularUseCase(showRepository: getIt()));

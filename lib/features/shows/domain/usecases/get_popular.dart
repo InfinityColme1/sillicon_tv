@@ -1,44 +1,47 @@
 import 'package:sillicont_tv/core/resources/data_state.dart';
 import 'package:sillicont_tv/core/usecase.dart';
-import 'package:sillicont_tv/features/shows/domain/entities/genre.dart';
 import 'package:sillicont_tv/features/shows/domain/entities/show.dart';
 import 'package:sillicont_tv/features/shows/domain/repository/show_repository.dart';
 
-
-class GetPopularUseCase extends UseCase<DataState<List<ShowEntity>>, void> {
-
-  final ShowRepository _showRepository;
+class GetPopularParams {
+  final bool onLine;
   final String ? language;
   final int ? page;
 
+  GetPopularParams({required this.onLine, this.language, this.page});
+}
+
+class GetPopularUseCase extends UseCase<DataState<List<ShowEntity>>, GetPopularParams> {
+
+  final ShowRepository _showRepository;
+
   GetPopularUseCase({
     required this._showRepository,
-    this.language,
-    this.page
   });
 
   @override
-  Future<DataState<List<ShowEntity>>> call({void params}) async {
+  Future<DataState<List<ShowEntity>>> call({GetPopularParams? params}) async {
 
-    final results = await Future.wait([
-      _showRepository.getPopularShowEntities(language: language, page: page),
-      _showRepository.getTVGenres(language: language)
-    ]);
+    final remoteResults = await _showRepository.getPopularShowEntitiesFromAPI(
+        language: params?.language,
+        page: params?.page
+    );
 
-    final shows = results[0].data as List<ShowEntity>;
-    final tvGenres = results[1].data as List<GenreEntity>;
+    if (remoteResults is DataException ||
+        remoteResults.data == null ||
+        !params!.onLine) {
+      final localResults = await _showRepository.getShowEntitiesFromLocal();
+      return localResults;
+    }
 
-    final showsAndGenres = shows.map((show) {
-      
-      final genreNameList = tvGenres
-          .where((g) => show.genreIds!.contains(g.id))
-          .map((g) => g.name)
-          .toList();
+    if (remoteResults is DataSuccess) {
+      for (var show in remoteResults.data!) {
+        await _showRepository.saveShowEntity(show: show);
+      }
+      return remoteResults;
+    }
 
-      return show.copyWith(genreNames: genreNameList);
-    }).toList();
-
-    return DataSuccess(showsAndGenres);
+    return DataException(Exception("Error fetching data"));
   }
   
 }

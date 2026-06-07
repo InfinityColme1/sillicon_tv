@@ -1,0 +1,32 @@
+
+{
+  "@@locale": "en",
+  "language": "English",
+  "@language": {
+    "description": "Selected language"
+  },
+  "popular": "Popular right now",
+  "firstAired": "First aired in",
+  "airedIn": "Aired in",
+  "seasons": "Seasons",
+  "season": "Season",
+  "episodes": "Episodes",
+  "episode": "Episode",
+  "status": "Status",
+  "adult": "For adults only",
+  "runtime": "Episode runtime",
+  "type": "Type",
+  "overview": "Overview",
+  "createdBy": "Created by",
+  "lastEpisode": "Last aired episode",
+  "lastAired": "Last aired in",
+  "production": "In production",
+  "yes": "yes",
+  "no": "no",
+  "unknown": "Unknown",
+  "languages": "Languages",
+  "companies": "Producer Companies",
+  "networks": "Networks",
+  "homepage": "Homepage",
+  "error": "Couldn't perform the action"
+}

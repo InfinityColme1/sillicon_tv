@@ -1,0 +1,31 @@
+{
+  "@@locale": "es",
+  "language": "Castellano",
+  "@language": {
+    "description": "Idioma seleccionado"
+  },
+  "popular": "Popular ahora",
+  "firstAired": "Emitido el",
+  "airedIn": "Emitido el",
+  "seasons": "Temporadas",
+  "season": "Temporada",
+  "episodes": "Episodios",
+  "episode": "Episodio",
+  "status": "Estado",
+  "adult": "Solo para adultos",
+  "runtime": "Duración por episodio",
+  "type": "Tipo",
+  "overview": "Sinposis",
+  "createdBy": "Creado por",
+  "lastEpisode": "Último episodio emitido",
+  "lastAired": "Última vez emitido el",
+  "production": "En producción",
+  "yes": "si",
+  "no": "no",
+  "unknown": "Desconocido",
+  "languages": "Idiomas",
+  "companies": "Productoras",
+  "networks": "Networks",
+  "homepage": "Donde ver",
+  "error": "No se pudo hacer la operación"
+}
