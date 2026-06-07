@@ -29,7 +29,8 @@ dependencies:
   flutter_bloc:
   equatable:
   get_it: 
-  floor:
+  floor: 
+  cached_network_image: 
   dio: 
   flutter_dotenv: 
 
