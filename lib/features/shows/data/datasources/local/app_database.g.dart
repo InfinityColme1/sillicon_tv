@@ -764,7 +764,7 @@ class _$ShowCreatorsDao extends ShowCreatorsDao {
   @override
   Future<void> insertShowCreator(ShowCreatorsModel showCreator) async {
     await _showCreatorsModelInsertionAdapter.insert(
-        showCreator, OnConflictStrategy.abort);
+        showCreator, OnConflictStrategy.ignore);
   }
 }
 
@@ -812,7 +812,7 @@ class _$ShowGenresDao extends ShowGenresDao {
   @override
   Future<void> insertShowGenre(ShowGenresModel showGenre) async {
     await _showGenresModelInsertionAdapter.insert(
-        showGenre, OnConflictStrategy.abort);
+        showGenre, OnConflictStrategy.ignore);
   }
 }
 
@@ -840,7 +840,7 @@ class _$ShowCompaniesDao extends ShowCompaniesDao {
 
   @override
   Future<List<ShowCompaniesModel>> getShowCompany() async {
-    return _queryAdapter.queryList('SELECT * FROM ShowCompanyModel',
+    return _queryAdapter.queryList('SELECT * FROM ShowCompaniesModel',
         mapper: (Map<String, Object?> row) => ShowCompaniesModel(
             showId: row['showId'] as int, companyId: row['companyId'] as int));
   }
@@ -848,7 +848,7 @@ class _$ShowCompaniesDao extends ShowCompaniesDao {
   @override
   Future<List<ShowCompaniesModel>> getCompaniesByShowId(int id) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM ShowCompanyModel WHERE showId = ?1',
+        'SELECT * FROM ShowCompaniesModel WHERE showId = ?1',
         mapper: (Map<String, Object?> row) => ShowCompaniesModel(
             showId: row['showId'] as int, companyId: row['companyId'] as int),
         arguments: [id]);
@@ -857,7 +857,7 @@ class _$ShowCompaniesDao extends ShowCompaniesDao {
   @override
   Future<void> insertShowCompany(ShowCompaniesModel showCreator) async {
     await _showCompaniesModelInsertionAdapter.insert(
-        showCreator, OnConflictStrategy.abort);
+        showCreator, OnConflictStrategy.ignore);
   }
 }
 
@@ -901,7 +901,7 @@ class _$ShowNetworksDao extends ShowNetworksDao {
   @override
   Future<void> insertShowNetwork(ShowNetworkModel showCreator) async {
     await _showNetworkModelInsertionAdapter.insert(
-        showCreator, OnConflictStrategy.abort);
+        showCreator, OnConflictStrategy.ignore);
   }
 }
 

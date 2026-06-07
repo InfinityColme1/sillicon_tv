@@ -5,12 +5,12 @@ import '../../../../models/relations/show_companies.dart';
 @dao
 abstract class ShowCompaniesDao {
 
-  @insert
+  @Insert(onConflict: OnConflictStrategy.ignore)
   Future<void> insertShowCompany(ShowCompaniesModel showCreator);
 
-  @Query('SELECT * FROM ShowCompanyModel')
+  @Query('SELECT * FROM ShowCompaniesModel')
   Future<List<ShowCompaniesModel>> getShowCompany();
 
-  @Query('SELECT * FROM ShowCompanyModel WHERE showId = :id')
+  @Query('SELECT * FROM ShowCompaniesModel WHERE showId = :id')
   Future<List<ShowCompaniesModel>> getCompaniesByShowId(int id);
 }

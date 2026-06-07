@@ -135,7 +135,10 @@ class ShowRepositoryImpl implements ShowRepository {
   }) async {
     try {
 
-      final showDetailsModel = await _appDatabase.showDetailsDao.getFirstShow();
+      final showDetailsModel = await _appDatabase.showDetailsDao.getShowDetailsById(showId);
+      if (showDetailsModel == null) {
+        throw Exception("Show details not found or invalid data");
+      }
 
       final showModel = await _appDatabase.showDao.getShowById(showId);
 
@@ -192,7 +195,7 @@ class ShowRepositoryImpl implements ShowRepository {
       );
 
       return DataSuccess(showDetails);
-    } on DioException catch(e) {
+    } on Exception catch(e) {
       return DataException(e);
     }
   }

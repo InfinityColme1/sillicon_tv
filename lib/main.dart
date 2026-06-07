@@ -30,11 +30,11 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             return MaterialApp(
               title: appTitle,
+              debugShowCheckedModeBanner: false,
 
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
               themeMode: state.themeMode,
-
 
               locale: Locale(state.lang),
               localizationsDelegates: AppLocalizations.localizationsDelegates,

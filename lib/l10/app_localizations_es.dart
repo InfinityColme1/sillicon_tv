@@ -79,4 +79,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homepage => 'Donde ver';
+
+  @override
+  String get error => 'No se pudo hacer la operación';
 }

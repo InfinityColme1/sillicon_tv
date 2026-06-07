@@ -6,7 +6,7 @@ import 'package:sillicont_tv/features/shows/data/models/relations/show_genres.da
 @dao
 abstract class ShowGenresDao {
 
-  @insert
+  @Insert(onConflict: OnConflictStrategy.ignore)
   Future<void> insertShowGenre(ShowGenresModel showGenre);
 
   @Query('SELECT * FROM ShowGenres')

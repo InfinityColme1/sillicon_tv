@@ -7,6 +7,7 @@ import 'package:sillicont_tv/features/shows/presentation/pages/show_details.dart
 import 'package:sillicont_tv/features/shows/presentation/widgets/show_horizontal_card.dart';
 import 'package:sillicont_tv/l10/app_localizations.dart';
 
+import '../../../../config/theme/app_colors.dart';
 import '../bloc/show_event.dart';
 
 class PopularShows extends StatefulWidget {
@@ -21,6 +22,17 @@ class _PopularShows extends State<PopularShows> {
   bool searchOnline = true;
   ThemeMode themeMode = ThemeMode.light;
   String language = english;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    _scrollController.addListener(() {
+     if (_scrollController.offset >= _scrollController.position.maxScrollExtent) {
+       context.read<ShowBloc>().add(GetMoreShows());
+     }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +43,18 @@ class _PopularShows extends State<PopularShows> {
         language = state.lang;
         themeMode = state.themeMode;
 
+        if (state is ShowException) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.error,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.terciary
+                  ),
+                )
+            )
+          );
+        }
 
         if (state is ShowSuccess) {
           setState(() {
@@ -101,11 +125,7 @@ class _PopularShows extends State<PopularShows> {
           );
         }
 
-        if (state is ShowException) {
-          return const Center(child: Icon(Icons.refresh));
-        }
-
-        if (state is ShowSuccess) {
+        if (state is ShowSuccess || state is ShowException) {
           final bool searchOnline = state.searchOnline;
           final List<Widget> bodyWidgets = [];
 
@@ -140,6 +160,7 @@ class _PopularShows extends State<PopularShows> {
           return Padding(
             padding: EdgeInsetsGeometry.symmetric(horizontal: 10),
             child: ListView.builder(
+                controller: _scrollController,
                 itemCount: state.showList!.length,
                 itemBuilder: (context, idx) {
                   return bodyWidgets[idx];

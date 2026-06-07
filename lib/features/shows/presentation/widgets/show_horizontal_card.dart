@@ -47,7 +47,13 @@ class ShowHorizontalCard extends StatelessWidget {
                   loadingBuilder: (context, child, progress) {
                     return progress == null
                         ? child
-                        : LinearProgressIndicator();
+                        : SizedBox(
+                            width: 100,
+                            height: 150,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
                   },
                 )
               : Image.asset(

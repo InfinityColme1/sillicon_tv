@@ -6,7 +6,7 @@ import '../../../../models/relations/show_network.dart';
 @dao
 abstract class ShowNetworksDao {
 
-  @insert
+  @Insert(onConflict: OnConflictStrategy.ignore)
   Future<void> insertShowNetwork(ShowNetworkModel showCreator);
 
   @Query('SELECT * FROM ShowNetworkModel')

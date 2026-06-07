@@ -73,7 +73,8 @@ class ShowSuccess extends ShowState {
     required List<ShowEntity> shows,
     required super.searchOnline,
     super.themeMode = ThemeMode.light,
-    super.lang
+    super.lang,
+    super.page
   }) : super(showList: shows);
 
   @override
@@ -90,13 +91,22 @@ class ShowSuccess extends ShowState {
       shows: showList ?? this.showList!,
       searchOnline: searchOnline ?? this.searchOnline,
       themeMode: themeMode ?? this.themeMode,
-      lang: lang ?? this.lang
+      lang: lang ?? this.lang,
+      page: page ?? this.page
     );
   }
 }
 
 class ShowException extends ShowState {
-  const ShowException(Exception exception, {super.themeMode}) : super(exception: exception);
+  const ShowException({
+    required Exception exception,
+    super.showList,
+    super.showDetails,
+    super.themeMode,
+    super.lang,
+    super.searchOnline,
+    super.page
+  }) : super(exception: exception);
 
   @override
   ShowException copyWith({
@@ -108,7 +118,15 @@ class ShowException extends ShowState {
     String ? lang,
     int ? page,
   }) {
-    return ShowException(exception ?? this.exception!, themeMode: themeMode ?? this.themeMode);
+    return ShowException(
+        showList: showList ?? this.showList,
+        showDetails: showDetails ?? this.showDetails,
+        exception: exception ?? this.exception!,
+        themeMode: themeMode ?? this.themeMode,
+        lang: lang ?? this.lang,
+        searchOnline: searchOnline ?? this.searchOnline,
+        page: page ?? this.page
+    );
   }
 }
 
@@ -117,7 +135,8 @@ class ShowDetailsSuccess extends ShowState {
     required ShowDetailsEntity showDetails,
     required super.searchOnline,
     super.themeMode = ThemeMode.light,
-    super.lang
+    super.lang,
+    super.page
   }) : super(showDetails: showDetails);
 
   @override
@@ -134,7 +153,8 @@ class ShowDetailsSuccess extends ShowState {
         showDetails: showDetails ?? this.showDetails!,
         searchOnline: searchOnline ?? this.searchOnline,
         themeMode: themeMode ?? this.themeMode,
-        lang: lang ?? this.lang
+        lang: lang ?? this.lang,
+        page: page ?? this.page
     );
   }
 }

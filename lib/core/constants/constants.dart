@@ -8,6 +8,7 @@ const String tmdbApiHost = 'api.themoviedb.org';
 
 const int dummyShowId = 1399;
 const String unknownImg = 'assets/images/Unknown_person.jpg';
+const int maxPage = 500;
 
 const String english = 'en';
 const String spanish = 'es';

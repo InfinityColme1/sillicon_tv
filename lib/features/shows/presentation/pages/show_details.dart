@@ -78,16 +78,20 @@ class ShowDetails extends StatelessWidget {
       ),
     ));
 
-    bodyWidgets.add(Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
-      child: Text(
-        AppLocalizations.of(context)!.createdBy,
-        style: Theme.of(context).textTheme.headlineSmall,
-        overflow: TextOverflow.ellipsis,
-      ),
-    ));
 
-    bodyWidgets.add(_buildCreatedBy());
+
+    if(_showDetailsEntity.createdBy!.isNotEmpty) {
+      bodyWidgets.add(Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(8, 5, 10, 10),
+        child: Text(
+          AppLocalizations.of(context)!.createdBy,
+          style: Theme.of(context).textTheme.headlineSmall,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ));
+
+      bodyWidgets.add(_buildCreatedBy());
+    }
 
     
     bodyWidgets.add(Padding(
@@ -173,12 +177,15 @@ class ShowDetails extends StatelessWidget {
               ),
             ),
 
-            if (_showDetailsEntity.tagline != null)
+            if (_showDetailsEntity.tagline != null && _showDetailsEntity.tagline != '')
             Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 30, horizontal: 10),
               child: Text(
-                _showDetailsEntity.tagline!,
-                style: Theme.of(context).textTheme.headlineSmall,
+                "'${_showDetailsEntity.tagline!}'",
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontStyle: FontStyle.italic
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -253,13 +260,14 @@ class ShowDetails extends StatelessWidget {
               InkWell(
                 onTap: () async {
                   final Uri url = Uri.parse(_showDetailsEntity.homepage!);
-                  if (await canLaunchUrl(url)) {
-                    launchUrl(url);
-                  }
+                  context.read<ShowBloc>().add(GoToHomepage(url: url));
                 },
                 child: Text(
                   AppLocalizations.of(context)!.homepage,
-                  style: TextStyle(color: AppColors.blue, fontStyle: FontStyle.italic),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: AppColors.blue,
+                    fontStyle: FontStyle.italic
+                  ),
                 ),
               )
           ],
