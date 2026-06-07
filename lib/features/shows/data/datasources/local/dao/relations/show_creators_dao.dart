@@ -5,7 +5,7 @@ import 'package:sillicont_tv/features/shows/data/models/relations/show_creators.
 @dao
 abstract class ShowCreatorsDao {
 
-  @insert
+  @Insert(onConflict: OnConflictStrategy.ignore)
   Future<void> insertShowCreator(ShowCreatorsModel showCreator);
 
   @Query('SELECT * FROM ShowCreators')

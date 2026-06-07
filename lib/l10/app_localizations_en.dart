@@ -79,4 +79,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homepage => 'Homepage';
+
+  @override
+  String get error => 'Couldn\'t perform the action';
 }

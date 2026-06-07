@@ -27,5 +27,6 @@
   "languages": "Languages",
   "companies": "Producer Companies",
   "networks": "Networks",
-  "homepage": "Homepage"
+  "homepage": "Homepage",
+  "error": "Couldn't perform the action"
 }

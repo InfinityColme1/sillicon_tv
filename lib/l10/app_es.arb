@@ -26,6 +26,6 @@
   "languages": "Idiomas",
   "companies": "Productoras",
   "networks": "Networks",
-  "homepage": "Donde ver"
-
+  "homepage": "Donde ver",
+  "error": "No se pudo hacer la operación"
 }

@@ -6,6 +6,7 @@ import 'package:sillicont_tv/features/shows/domain/usecases/get_popular.dart';
 import 'package:sillicont_tv/features/shows/domain/usecases/get_show_details.dart';
 import 'package:sillicont_tv/features/shows/presentation/bloc/show_event.dart';
 import 'package:sillicont_tv/features/shows/presentation/bloc/show_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ShowBloc extends Bloc<ShowEvent, ShowState>{
 
@@ -22,6 +23,8 @@ class ShowBloc extends Bloc<ShowEvent, ShowState>{
     on<ChangeSearchMode> (onChangeSearchMode);
     on<ChangeTheme> (onChangeTheme);
     on<ChangeLanguage> (onChangeLanguage);
+    on<GoToHomepage> (onGoToHomepage);
+    on<GetMoreShows> (onGetMoreShows);
   }
 
   void onGetPopularShows(GetPopularShows event, Emitter<ShowState> emit) async {
@@ -39,12 +42,21 @@ class ShowBloc extends Bloc<ShowEvent, ShowState>{
           shows: dataState.data!,
           themeMode: state.themeMode,
           searchOnline: event.searchOnline,
-          lang: state.lang
+          lang: state.lang,
+          page: state.page
       ));
     }
 
     if (dataState is DataException) {
-      emit(ShowException(dataState.exception!, themeMode: state.themeMode,));
+      emit(ShowException(
+          showList: state.showList,
+          showDetails: state.showDetails,
+          exception: dataState.exception!,
+          themeMode: state.themeMode,
+          lang: state.lang,
+          searchOnline: state.searchOnline,
+          page: state.page
+      ));
     }
   }
 
@@ -60,15 +72,24 @@ class ShowBloc extends Bloc<ShowEvent, ShowState>{
 
     if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
       emit(ShowSuccess(
-        shows: dataState.data!,
-        searchOnline: state.searchOnline,
-        themeMode: state.themeMode,
-        lang: state.lang,
+          shows: dataState.data!,
+          searchOnline: state.searchOnline,
+          themeMode: state.themeMode,
+          lang: state.lang,
+          page: state.page
       ));
     }
 
     if (dataState is DataException) {
-      emit(ShowException(dataState.exception!, themeMode: state.themeMode,));
+      emit(ShowException(
+          showList: state.showList,
+          showDetails: state.showDetails,
+          exception: dataState.exception!,
+          themeMode: state.themeMode,
+          lang: state.lang,
+          searchOnline: state.searchOnline,
+          page: state.page
+      ));
     }
 
   }
@@ -88,12 +109,21 @@ class ShowBloc extends Bloc<ShowEvent, ShowState>{
           showDetails: dataState.data!,
           themeMode: state.themeMode,
           searchOnline: event.searchOnline,
-          lang: state.lang
+          lang: state.lang,
+          page: state.page
       ));
     }
 
     if (dataState is DataException) {
-      emit(ShowException(dataState.exception!, themeMode: state.themeMode));
+      emit(ShowException(
+          showList: state.showList,
+          showDetails: state.showDetails,
+          exception: dataState.exception!,
+          themeMode: state.themeMode,
+          lang: state.lang,
+          searchOnline: state.searchOnline,
+          page: state.page
+      ));
     }
   }
 
@@ -144,13 +174,99 @@ class ShowBloc extends Bloc<ShowEvent, ShowState>{
           shows: dataState.data!,
           themeMode: state.themeMode,
           searchOnline: state.searchOnline,
-          lang: language
+          lang: language,
+          page: state.page
       ));
     }
 
     if (dataState is DataException) {
-      emit(ShowException(dataState.exception!, themeMode: state.themeMode,));
+      emit(ShowException(
+          showList: state.showList,
+          showDetails: state.showDetails,
+          exception: dataState.exception!,
+          themeMode: state.themeMode,
+          lang: state.lang,
+          searchOnline: state.searchOnline,
+          page: state.page
+      ));
     }
 
+  }
+
+  void onGoToHomepage(GoToHomepage event, Emitter<ShowState> emit) async {
+    try {
+      if (await canLaunchUrl(event.url) && state.searchOnline) {
+        await launchUrl(
+          event.url,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        emit(ShowException(
+            showList: state.showList,
+            showDetails: state.showDetails,
+            exception: Exception("Error launching url"),
+            themeMode: state.themeMode,
+            lang: state.lang,
+            searchOnline: state.searchOnline,
+            page: state.page
+        ));
+      }
+    } on Exception catch (e) {
+      emit(ShowException(
+          showList: state.showList,
+          showDetails: state.showDetails,
+          exception: Exception(e),
+          themeMode: state.themeMode,
+          lang: state.lang,
+          searchOnline: state.searchOnline,
+          page: state.page
+      ));
+    }
+  }
+
+  void onGetMoreShows(GetMoreShows event, Emitter<ShowState> emit) async {
+
+    final nextPage = state.page + 1;
+    if (nextPage >= maxPage || !state.searchOnline) {
+      emit(ShowException(
+          showList: state.showList,
+          showDetails: state.showDetails,
+          exception: Exception("No more pages to show"),
+          themeMode: state.themeMode,
+          lang: state.lang,
+          searchOnline: state.searchOnline,
+          page: state.page
+      ));
+    }
+
+    final dataState = await _getPopularUseCase(
+        params: GetPopularParams(
+            onLine: state.searchOnline,
+            language: state.lang,
+            page: nextPage
+        )
+    );
+
+    if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
+      emit(ShowSuccess(
+          shows: state.showList! + dataState.data!,
+          themeMode: state.themeMode,
+          searchOnline: state.searchOnline,
+          lang: state.lang,
+          page: nextPage
+      ));
+    }
+
+    if (dataState is DataException) {
+      emit(ShowException(
+          showList: state.showList,
+          showDetails: state.showDetails,
+          exception: dataState.exception!,
+          themeMode: state.themeMode,
+          lang: state.lang,
+          searchOnline: state.searchOnline,
+          page: state.page
+      ));
+    }
   }
 }

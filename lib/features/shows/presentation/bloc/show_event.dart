@@ -22,6 +22,10 @@ class GetShowDetails extends ShowEvent {
   const GetShowDetails({required this.showId, required this.searchOnline});
 }
 
+class GetMoreShows extends ShowEvent {
+  const GetMoreShows();
+}
+
 class ReloadShowList extends ShowEvent {
   const ReloadShowList();
 }
@@ -36,4 +40,9 @@ class ChangeTheme extends ShowEvent {
 
 class ChangeLanguage extends ShowEvent {
   const ChangeLanguage();
+}
+
+class GoToHomepage extends ShowEvent {
+  final Uri url;
+  const GoToHomepage({required this.url});
 }

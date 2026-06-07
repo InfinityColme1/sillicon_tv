@@ -241,6 +241,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Homepage'**
   String get homepage;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t perform the action'**
+  String get error;
 }
 
 class _AppLocalizationsDelegate
